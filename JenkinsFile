@@ -36,8 +36,8 @@ pipeline {
         stage('Code Quality Analysis') {
             steps {
                 echo 'Running SonarCloud analysis...'
-                
-                def scannerHome = tool 'SonarScanner'; // Use 'SonarScanner' as the scanner installation name
+                script {
+                    def scannerHome = tool(name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation') // Use 'SonarScanner'
 
                     withSonarQubeEnv('SonarCloud') {  // 'SonarCloud' is the name of your SonarQube installation in Jenkins
                         sh """
@@ -48,6 +48,8 @@ pipeline {
                         -Dsonar.login=${SONAR_TOKEN}
                         """
                     }
+                }
+        
 
             }
         }
