@@ -1,0 +1,71 @@
+	<!-- Navigation -->
+		<nav class="navbar navbar-expand-lg bg-subtle">
+			<div class="container-fluid">
+				<a class="navbar-brand text-dark jersey-20-charted-regular" href="/">
+					<h1>NORIMONO</h1>
+				</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+					data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link text-secondary" href="/motorcycles">Motorcycles</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link text-secondary dropdown-toggle" href="#" role="button"
+								data-bs-toggle="dropdown" aria-expanded="false">Collections</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/menCollections">Men</a></li>
+								<li><a class="dropdown-item" href="/womenCollections">Women</a></li>
+								<li><a class="dropdown-item" href="/kidsCollections">Kids</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link text-secondary dropdown-toggle" href="#" role="button"
+								data-bs-toggle="dropdown" aria-expanded="false">Owners</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/insurance">Warranty & Insurance</a></li>
+								<li><a class="dropdown-item" href="/service">Book a service</a></li>
+							</ul>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-secondary" href="/news">News</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-secondary" href="/dealers">Dealers</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-secondary" href="/contact">Contact</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-secondary" href="/registration">Join Us</a>
+						</li>
+					</ul>
+					<ul class="navbar-nav mb-2 mb-lg-0">
+						<li class="nav-item">
+							<form class="d-flex" role="search">
+								<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+								<button class="btn btn-outline-secondary" type="submit"><span
+										class="material-symbols-outlined navbarSearchIcon">search</span></button>
+							</form>
+						</li>
+						<% if (typeof name !== 'undefined' && name) { %>
+							<div class="">
+								<%= name %>
+							</div>
+						<% }else{  %>
+							<li>
+								<button class="btn btn-outline-secondary"><a class="nav-link text-secondary" style="max-height: 40px;" href="/login">Log in</a></button>
+							</li>
+
+						<% } %>
+
+					</ul>
+
+				</div>
+			</div>
+		</nav>
+

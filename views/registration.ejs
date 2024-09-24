@@ -1,0 +1,50 @@
+<%- include('header'); -%>
+    <%- include('navbar'); -%>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-5">MEMBER REGISTRATION</h2>
+        <form action="/registration" method="post">
+            <div class="row mb-4">
+                <div class="col-md-6 col-12">
+                    <label for="login_cd" class="form-label">Login CD</label>
+                    <input type="text" class="form-control" id="login_cd" name="login_cd" required>
+                </div>
+                <div class="col-md-6 col-12">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-6 col-12">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="col-md-6 col-12">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-6 col-12">
+                    <label for="mobile" class="form-label">Mobile</label>
+                    <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="+xxx xxxx xxx" pattern="[0-9]{10}"
+                        required>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <button id="register" class="btn btn-primary">Register</button>
+                    <button type="reset" class="btn btn-secondary">Reset</button>
+                </div>
+            </div>
+        </form>
+        <div class="row mb-4">
+            <h6 class="form-title">Already a member?</h6>
+
+            <div class="col-md-12">
+                <a href="/login"><button class="btn btn-primary">Login</button></a>
+            </div>
+        </div>
+    </div>
+
+            <%- include('footer'); -%>
