@@ -37,16 +37,14 @@ pipeline {
             steps {
                 echo 'Running SonarCloud analysis...'
                 script {
-                    def scannerHome = tool(name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation') // Use 'SonarScanner'
+                    def scannerHome = tool 'SonarScanner' // Use 'SonarScanner'
 
                     withSonarQubeEnv('SonarCloud') {  // 'SonarCloud' is the name of your SonarQube installation in Jenkins
-                        sh """
-                        ${scannerHome}/bin/sonar-scanner \
-                        -Dsonar.projectKey=your_project_key \
-                        -Dsonar.organization=your_organization_key \
-                        -Dsonar.host.url=https://sonarcloud.io \
-                        -Dsonar.login=${SONAR_TOKEN}
-                        """
+                        sh "${scannerHome}/bin/sonar-scanner"
+                        sh "-Dsonar.projectKey=bike_website"
+                        sh "-Dsonar.host.url=https://sonarcloud.io"
+                        sh "-Dsonar.login=${SONAR_TOKEN}"
+
                     }
                 }
         
