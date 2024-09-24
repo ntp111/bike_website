@@ -1,11 +1,15 @@
 pipeline {
     agent any
 
+   tools {
+        sonarQube 'SonarScanner'
+    }
     environment {
         WORKSPACE_DIR = "${env.WORKSPACE}" 
         STAGING_ENV = 'staging' 
         PROD_ENV = 'production'
         EMAIL_RECIPIENT = 'ngtuanphong98@gmail.com'
+        SONAR_SCANNER_HOME = tool 'SonarScanner'
 
         AWS_REGION = 'ap-southeast-2'
         S3_BUCKET = 'bikewebsitebucket'
@@ -35,8 +39,12 @@ pipeline {
         stage('Code Quality Analysis') {
             steps {
                 echo 'Running SonarCloud analysis...'
-                withSonarQubeEnv('SonarCloud') {
-                    sh 'sonar-scanner -Dsonar.projectKey=bike_website -Dsonar.sources=.'
+                withSonarQubeEnv('SonarCloud') {  // SonarCloud should match the name you set in Jenkins config
+                    sh "${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+                       -Dsonar.projectKey=bike_website \
+                       -Dsonar.sources=. \
+                       -Dsonar.host.url=https://sonarcloud.io \
+                       -Dsonar.login=${SONAR_TOKEN}"  // SONAR_TOKEN must be configured as a Jenkins credential
                 }
             }
         }
