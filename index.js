@@ -4,6 +4,7 @@ const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const port = 3000;
 
+
 // Tell our application to serve all the files under the `public_html` directory
 app.use(express.static('public_html'))
 
