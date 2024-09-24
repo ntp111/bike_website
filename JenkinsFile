@@ -1,0 +1,104 @@
+pipeline {
+    
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building the code using Maven...'
+                echo 'Tool: Maven'
+            }
+        }
+
+        stage('Unit and Integration Tests') {
+            steps {
+                echo 'Running unit and integration tests...'
+                echo 'Tools: JUnit for unit tests, TestNG for integration tests'
+            }
+            post {
+                always {
+                    emailext(
+                        attachLog: true,
+                        to: 'ngtuanphong98@gmail.com',
+                        subject: "Unit and Integration Tests Completed",
+                        body: """Unit and Integration Tests stage has completed with status: ${currentBuild.currentResult}. 
+
+                        Please check the attached log for more details."""
+                    )
+                }
+            }
+        }
+
+        stage('Code Analysis') {
+            steps {
+                echo 'Performing code analysis...'
+                echo 'Tool: SonarQube'
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                echo 'Performing security scan...'
+                echo 'Tool: OWASP Dependency-Check'
+            }
+            post {
+                always {
+                    emailext(
+                        attachLog: true,
+                        to: 'ngtuanphong98@gmail.com',
+                        subject: "Security Scan Completed",
+                        body: """Security Scan stage has completed with status: ${currentBuild.currentResult}. 
+
+                        Please check the attached log for more details."""
+                    )
+                }
+            }
+        }
+
+        stage('Deploy to Staging') {
+            steps {
+                echo 'Deploying application to staging environment...'
+                echo 'Tool: AWS CLI for deploying to an AWS EC2 instance'
+            }
+        }
+
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Running integration tests on the staging environment...'
+                echo 'Tools: Selenium for web applications, Postman for API testing'
+            }
+            post {
+                always {
+                    emailext(
+                        attachLog: true,
+                        to: 'ngtuanphong98@gmail.com',
+                        subject: "Integration Tests on Staging Completed",
+                        body: """Integration Tests on Staging stage has completed with status: ${currentBuild.currentResult}. 
+
+                        Please check the attached log for more details."""
+                    )
+                }
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                echo 'Deploying application to production environment...'
+                echo 'Tool: AWS CLI for deploying to an AWS EC2 instance'
+            }
+        }
+    }
+
+    post {
+        always {
+            emailext(
+                attachLog: true,
+                to: 'ngtuanphong98@gmail.com',
+                subject: "Pipeline ${currentBuild.fullDisplayName} completed",
+                body: """Pipeline ${currentBuild.fullDisplayName} completed with status ${currentBuild.currentResult}. 
+
+                Please check the attached log for more details."""
+            )
+        }
+    }
+}
