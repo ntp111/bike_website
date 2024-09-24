@@ -40,10 +40,10 @@ pipeline {
                     def scannerHome = tool 'SonarScanner' // Use 'SonarScanner'
 
                     withSonarQubeEnv('SonarCloud') {  // 'SonarCloud' is the name of your SonarQube installation in Jenkins
-                        sh "${scannerHome}/bin/sonar-scanner"
-                        sh "-Dsonar.projectKey=bike_website"
-                        sh "-Dsonar.host.url=https://sonarcloud.io"
-                        sh "-Dsonar.login=${SONAR_TOKEN}"
+                        bat "${scannerHome}/bin/sonar-scanner"
+                        bat "-Dsonar.projectKey=bike_website"
+                        bat "-Dsonar.host.url=https://sonarcloud.io"
+                        bat "-Dsonar.login=${SONAR_TOKEN}"
 
                     }
                 }
