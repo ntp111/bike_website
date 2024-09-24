@@ -13,6 +13,7 @@ pipeline {
         CODEDEPLOY_DEPLOYMENT_GROUP = 'MyWindowsAppDeploymentGroup'
         AWS_ACCESS_KEY = credentials('aws_access_key')  // Use Jenkins credentials for AWS
         AWS_SECRET_KEY = credentials('aws_secret_key')
+        AWS_SECRET_KEY = credentials('sonar_token')
 
     }
 
