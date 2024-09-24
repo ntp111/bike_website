@@ -1,0 +1,14 @@
+version: 0.0
+os: windows
+files:
+  - source: /
+    destination: C:\inetpub\wwwroot  # Path where the application should be deployed
+hooks:
+  AfterInstall:
+    - location: scripts\install_dependencies.ps1
+      timeout: 300
+      runas: Administrator
+  ApplicationStart:
+    - location: scripts\start_service.ps1
+      timeout: 300
+      runas: Administrator

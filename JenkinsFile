@@ -1,27 +1,35 @@
 pipeline {
-    
     agent any
+    environment {
+        WORKSPACE_DIR = "${env.WORKSPACE}" 
+        STAGING_ENV = 'staging' 
+        PROD_ENV = 'production'
+        EMAIL_RECIPIENT = 'ngtuanphong98@gmail.com'  // Email for notifications
+
+        AWS_REGION = 'ap-southeast-2'  // Change to your AWS region
+        S3_BUCKET = 'my-windows-app-artifacts'
+        CODEDEPLOY_APP_NAME = 'MyWindowsApp'
+        CODEDEPLOY_DEPLOYMENT_GROUP = 'MyWindowsAppDeploymentGroup'
+        AWS_ACCESS_KEY = credentials('aws_access_key_id')
+        AWS_SECRET_KEY = credentials('aws_secret_access_key')
+
+    }
 
     stages {
         stage('Build') {
             steps {
-                echo 'Building the code using Maven...'
-                echo 'Tool: Maven'
-            }
-        }
-
-        stage('Unit and Integration Tests') {
-            steps {
-                echo 'Running unit and integration tests...'
-                echo 'Tools: JUnit for unit tests, TestNG for integration tests'
+                echo 'Building the Docker image...'
+                sh 'docker build -t bike_website .'
             }
             post {
                 always {
                     emailext(
                         attachLog: true,
-                        to: 'ngtuanphong98@gmail.com',
-                        subject: "Unit and Integration Tests Completed",
-                        body: """Unit and Integration Tests stage has completed with status: ${currentBuild.currentResult}. 
+                        to: "${env.EMAIL_RECIPIENT}",
+                        subject: "Build Stage Completed",
+                        body: """The Build stage has completed with status: ${currentBuild.currentResult}.
+
+                        Docker Image created: bike_website
 
                         Please check the attached log for more details."""
                     )
@@ -29,25 +37,47 @@ pipeline {
             }
         }
 
-        stage('Code Analysis') {
+        stage('Test') {
             steps {
-                echo 'Performing code analysis...'
-                echo 'Tool: SonarQube'
-            }
-        }
-
-        stage('Security Scan') {
-            steps {
-                echo 'Performing security scan...'
-                echo 'Tool: OWASP Dependency-Check'
+                echo 'Running Mocha and Chai tests...'
+                sh 'npm test'
             }
             post {
                 always {
                     emailext(
                         attachLog: true,
-                        to: 'ngtuanphong98@gmail.com',
-                        subject: "Security Scan Completed",
-                        body: """Security Scan stage has completed with status: ${currentBuild.currentResult}. 
+                        to: "${env.EMAIL_RECIPIENT}",
+                        subject: "Test Stage Completed",
+                        body: """The Test stage has completed with status: ${currentBuild.currentResult}.
+
+                        Mocha/Chai tests were run on the Node.js application.
+
+                        Please check the attached log for more details."""
+                    )
+                }
+            }
+        }
+
+        stage('Code Quality Analysis') {
+            steps {
+                echo 'Running SonarCloud analysis...'
+                sh """
+                    sonar-scanner \
+                    -Dsonar.projectKey=bike_website \
+                    -Dsonar.sources=. \
+                    -Dsonar.host.url=https://sonarcloud.io \
+                    -Dsonar.login=${SONAR_TOKEN}
+                """
+            }
+            post {
+                always {
+                    emailext(
+                        attachLog: true,
+                        to: "${env.EMAIL_RECIPIENT}",
+                        subject: "Code Quality Analysis Completed",
+                        body: """The Code Quality Analysis stage has completed with status: ${currentBuild.currentResult}.
+
+                        SonarQube results available.
 
                         Please check the attached log for more details."""
                     )
@@ -57,8 +87,20 @@ pipeline {
 
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying application to staging environment...'
-                echo 'Tool: AWS CLI for deploying to an AWS EC2 instance'
+                echo "Deploying application to ${env.STAGING_ENV} environment..."
+                sh 'docker-compose up -d'
+            }
+            post {
+                always {
+                    emailext(
+                        attachLog: true,
+                        to: "${env.EMAIL_RECIPIENT}",
+                        subject: "Deployment to Staging Completed",
+                        body: """The application has been deployed to the ${env.STAGING_ENV} environment with status: ${currentBuild.currentResult}.
+
+                        Please check the attached log for more details."""
+                    )
+                }
             }
         }
 
@@ -66,14 +108,17 @@ pipeline {
             steps {
                 echo 'Running integration tests on the staging environment...'
                 echo 'Tools: Selenium for web applications, Postman for API testing'
+                // Add Selenium and Postman test commands here
             }
             post {
                 always {
                     emailext(
                         attachLog: true,
-                        to: 'ngtuanphong98@gmail.com',
+                        to: "${env.EMAIL_RECIPIENT}",
                         subject: "Integration Tests on Staging Completed",
-                        body: """Integration Tests on Staging stage has completed with status: ${currentBuild.currentResult}. 
+                        body: """The Integration Tests on Staging stage has completed with status: ${currentBuild.currentResult}.
+
+                        Selenium and Postman tests were executed.
 
                         Please check the attached log for more details."""
                     )
@@ -83,8 +128,41 @@ pipeline {
 
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying application to production environment...'
-                echo 'Tool: AWS CLI for deploying to an AWS EC2 instance'
+                script {
+                    // Step 1: Zip the application
+                    sh 'zip -r bike_website.zip .'
+
+                    // Step 2: Upload the zip file to S3
+                    sh """
+                    aws configure set aws_access_key_id ${AWS_ACCESS_KEY}
+                    aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
+                    aws configure set region ${AWS_REGION}
+                    aws s3 cp bike_website.zip s3://${S3_BUCKET}/bike_website.zip
+                    """
+
+                    // Step 3: Trigger deployment in CodeDeploy
+                    sh """
+                    aws deploy create-deployment \
+                    --application-name ${CODEDEPLOY_APP_NAME} \
+                    --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} \
+                    --s3-location bucket=${S3_BUCKET},key=bike_website.zip,bundleType=zip \
+                    --region ${AWS_REGION}
+                    """
+                }
+            }
+
+           
+            post {
+                always {
+                    emailext(
+                        attachLog: true,
+                        to: "${env.EMAIL_RECIPIENT}",
+                        subject: "Deployment to Production Completed",
+                        body: """The application has been deployed to the ${env.PROD_ENV} environment with status: ${currentBuild.currentResult}.
+
+                        Please check the attached log for more details."""
+                    )
+                }
             }
         }
     }
@@ -93,9 +171,9 @@ pipeline {
         always {
             emailext(
                 attachLog: true,
-                to: 'ngtuanphong98@gmail.com',
+                to: "${env.EMAIL_RECIPIENT}",
                 subject: "Pipeline ${currentBuild.fullDisplayName} completed",
-                body: """Pipeline ${currentBuild.fullDisplayName} completed with status ${currentBuild.currentResult}. 
+                body: """Pipeline ${currentBuild.fullDisplayName} completed with status ${currentBuild.currentResult}.
 
                 Please check the attached log for more details."""
             )
