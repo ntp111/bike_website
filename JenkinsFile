@@ -5,65 +5,36 @@ pipeline {
         WORKSPACE_DIR = "${env.WORKSPACE}" 
         STAGING_ENV = 'staging' 
         PROD_ENV = 'production'
-        EMAIL_RECIPIENT = 'ngtuanphong98@gmail.com'  // Email for notifications
+        EMAIL_RECIPIENT = 'ngtuanphong98@gmail.com'
 
-        AWS_REGION = 'ap-southeast-2'  // Change to your AWS region
-        S3_BUCKET = 'my-windows-app-artifacts'
-        CODEDEPLOY_APP_NAME = 'MyWindowsApp'
-        CODEDEPLOY_DEPLOYMENT_GROUP = 'MyWindowsAppDeploymentGroup'
-        AWS_ACCESS_KEY = credentials('aws_access_key')  // Use Jenkins credentials for AWS
+        AWS_REGION = 'ap-southeast-2'
+        S3_BUCKET = 'bikewebsitebucket'
+        CODEDEPLOY_APP_NAME = 'MyBikeWebsite'
+        CODEDEPLOY_DEPLOYMENT_GROUP = 'bike_website'
+        AWS_ACCESS_KEY = credentials('aws_access_key')
         AWS_SECRET_KEY = credentials('aws_secret_key')
         SONAR_TOKEN = credentials('sonar_token')
-
     }
 
     stages {
         stage('Build') {
             steps {
                 echo 'Building the Docker image...'
-                sh 'docker build -t bike_website .'
-            }
-            post {
-                always {
-                    emailext(
-                        attachLog: true,
-                        to: "${env.EMAIL_RECIPIENT}",
-                        subject: "Build Stage Completed",
-                        body: """The Build stage has completed with status: ${currentBuild.currentResult}.
-
-                        Docker Image created: bike_website
-
-                        Please check the attached log for more details."""
-                    )
-                }
+                bat 'docker build -t bike_website .'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Running Mocha and Chai tests...'
-                sh 'npm test'
-            }
-            post {
-                always {
-                    emailext(
-                        attachLog: true,
-                        to: "${env.EMAIL_RECIPIENT}",
-                        subject: "Test Stage Completed",
-                        body: """The Test stage has completed with status: ${currentBuild.currentResult}.
-
-                        Mocha/Chai tests were run on the Node.js application.
-
-                        Please check the attached log for more details."""
-                    )
-                }
+                bat 'npm test'
             }
         }
 
         stage('Code Quality Analysis') {
             steps {
                 echo 'Running SonarCloud analysis...'
-                sh """
+                bat """
                     sonar-scanner \
                     -Dsonar.projectKey=bike_website \
                     -Dsonar.sources=. \
@@ -71,60 +42,12 @@ pipeline {
                     -Dsonar.login=${SONAR_TOKEN}
                 """
             }
-            post {
-                always {
-                    emailext(
-                        attachLog: true,
-                        to: "${env.EMAIL_RECIPIENT}",
-                        subject: "Code Quality Analysis Completed",
-                        body: """The Code Quality Analysis stage has completed with status: ${currentBuild.currentResult}.
-
-                        SonarQube results available.
-
-                        Please check the attached log for more details."""
-                    )
-                }
-            }
         }
 
         stage('Deploy to Staging') {
             steps {
                 echo "Deploying application to ${env.STAGING_ENV} environment..."
-                sh 'docker-compose up -d'
-            }
-            post {
-                always {
-                    emailext(
-                        attachLog: true,
-                        to: "${env.EMAIL_RECIPIENT}",
-                        subject: "Deployment to Staging Completed",
-                        body: """The application has been deployed to the ${env.STAGING_ENV} environment with status: ${currentBuild.currentResult}.
-
-                        Please check the attached log for more details."""
-                    )
-                }
-            }
-        }
-
-        stage('Integration Tests on Staging') {
-            steps {
-                echo 'Running integration tests on the staging environment...'
-                echo 'Tools: Selenium for web applications, Postman for API testing'
-                // Add Selenium and Postman test commands here
-            }
-            post {
-                always {
-                    emailext(
-                        attachLog: true,
-                        to: "${env.EMAIL_RECIPIENT}",
-                        subject: "Integration Tests on Staging Completed",
-                        body: """The Integration Tests on Staging stage has completed with status: ${currentBuild.currentResult}.
-
-                        Selenium and Postman tests were executed.
-
-                        Please check the attached log for more details."""
-                    )
-                }
+                bat 'docker-compose up -d'
             }
         }
 
@@ -132,10 +55,10 @@ pipeline {
             steps {
                 script {
                     // Step 1: Zip the application
-                    sh 'zip -r bike_website.zip .'
+                    bat 'powershell Compress-Archive -Path .\\* -DestinationPath bike_website.zip'
 
                     // Step 2: Upload the zip file to S3
-                    sh """
+                    bat """
                     aws configure set aws_access_key_id ${AWS_ACCESS_KEY}
                     aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
                     aws configure set region ${AWS_REGION}
@@ -143,27 +66,13 @@ pipeline {
                     """
 
                     // Step 3: Trigger deployment in CodeDeploy
-                    sh """
+                    bat """
                     aws deploy create-deployment \
                     --application-name ${CODEDEPLOY_APP_NAME} \
                     --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} \
                     --s3-location bucket=${S3_BUCKET},key=bike_website.zip,bundleType=zip \
                     --region ${AWS_REGION}
                     """
-                }
-            }
-
-           
-            post {
-                always {
-                    emailext(
-                        attachLog: true,
-                        to: "${env.EMAIL_RECIPIENT}",
-                        subject: "Deployment to Production Completed",
-                        body: """The application has been deployed to the ${env.PROD_ENV} environment with status: ${currentBuild.currentResult}.
-
-                        Please check the attached log for more details."""
-                    )
                 }
             }
         }
@@ -176,7 +85,6 @@ pipeline {
                 to: "${env.EMAIL_RECIPIENT}",
                 subject: "Pipeline ${currentBuild.fullDisplayName} completed",
                 body: """Pipeline ${currentBuild.fullDisplayName} completed with status ${currentBuild.currentResult}.
-
                 Please check the attached log for more details."""
             )
         }
