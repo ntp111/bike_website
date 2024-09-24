@@ -1,21 +1,5 @@
 pipeline {
     agent any
-    environment {
-        WORKSPACE_DIR = "${env.WORKSPACE}" 
-        STAGING_ENV = 'staging' 
-        PROD_ENV = 'production'
-        EMAIL_RECIPIENT = 'ngtuanphong98@gmail.com'  // Email for notifications
-
-        AWS_REGION = 'ap-southeast-2'  // Change to your AWS region
-        S3_BUCKET = 'my-windows-app-artifacts'
-        CODEDEPLOY_APP_NAME = 'MyWindowsApp'
-        CODEDEPLOY_DEPLOYMENT_GROUP = 'MyWindowsAppDeploymentGroup'
-        AWS_ACCESS_KEY = credentials('aws_access_key_id')
-        AWS_SECRET_KEY = credentials('aws_secret_access_key')
-
-    }
-
-
 
     environment {
         WORKSPACE_DIR = "${env.WORKSPACE}" 
