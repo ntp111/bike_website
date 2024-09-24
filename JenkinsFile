@@ -36,9 +36,19 @@ pipeline {
         stage('Code Quality Analysis') {
             steps {
                 echo 'Running SonarCloud analysis...'
-                withSonarQubeEnv('SonarCloud') {
-                    sh 'mvn clean verify sonar:sonar -Dsonar.login=$SONARCLOUD_TOKEN'
-                }
+                
+                def scannerHome = tool 'SonarScanner'; // Use 'SonarScanner' as the scanner installation name
+
+                    withSonarQubeEnv('SonarCloud') {  // 'SonarCloud' is the name of your SonarQube installation in Jenkins
+                        sh """
+                        ${scannerHome}/bin/sonar-scanner \
+                        -Dsonar.projectKey=your_project_key \
+                        -Dsonar.organization=your_organization_key \
+                        -Dsonar.host.url=https://sonarcloud.io \
+                        -Dsonar.login=${SONAR_TOKEN}
+                        """
+                    }
+
             }
         }
 
