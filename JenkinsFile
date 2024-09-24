@@ -27,6 +27,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running Mocha and Chai tests...'
+                                bat 'npm install'
                 bat 'npm test'
             }
         }
