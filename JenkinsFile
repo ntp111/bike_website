@@ -36,7 +36,7 @@ pipeline {
             steps {
                 echo 'Running SonarCloud analysis...'
                 withSonarQubeEnv('SonarCloud') {
-                    bat 'sonar-scanner -Dsonar.projectKey=bike_website -Dsonar.sources=.'
+                    sh 'sonar-scanner -Dsonar.projectKey=bike_website -Dsonar.sources=.'
                 }
             }
         }
