@@ -1,7 +1,7 @@
 {
-  "name": "week8_3",
+  "name": "BikeWebsite",
   "version": "1.0.0",
-  "description": "8_3 task",
+  "description": "for bike website",
   "main": "index.js",
   "scripts": {
     "test": "mocha",

@@ -9,6 +9,8 @@ RUN npm install
 
 # RUN node -v
 # RUN npm list sqlite3
+RUN npm rebuild sqlite3 --build-from-source
+
 
 # Copy the source code
 COPY . .
