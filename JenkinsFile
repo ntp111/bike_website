@@ -7,7 +7,6 @@ pipeline {
         PROD_ENV = 'production'
         EMAIL_RECIPIENT = 'ngtuanphong98@gmail.com'
         DOCKER_IMAGE = "bikewebsite"
-        DOCKER_TAG = "1"
         SONAR_TOKEN = credentials('sonar_token')
     }
 
@@ -18,7 +17,7 @@ pipeline {
                 echo 'Creating a temporary Docker container...'
 
                 // Build the Docker image
-                bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                bat "docker build -t ${DOCKER_IMAGE}."
 
                 echo 'Cleaning up unused Docker images...'
                 bat 'docker image prune -f'
