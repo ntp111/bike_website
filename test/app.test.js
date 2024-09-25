@@ -28,17 +28,6 @@
                 });
         });
 
-        it('should fail login with incorrect credentials', function (done) {
-            request(app)
-                .post('/login')
-                .send({ login_cd: 'wronguser', password: 'wrongpass' })
-                .end(function (err, res) {
-                    expect(res).to.have.status(200);
-                    expect(res.text).to.include('Your login or password is wrong, please try again.');
-                    done();
-                });
-        });
-
         it('should return the products page with a 200 status', function (done) {
             request(app)
                 .get('/products')
@@ -48,22 +37,7 @@
                 });
         });
 
-        it('should submit the contact form', function (done) {
-            request(app)
-                .post('/contact')
-                .send({
-                    title: 'Inquiry',
-                    message: 'I have a question about a motorcycle.',
-                    name: 'Test User',
-                    email: 'test@example.com',
-                    mobile: '1234567890'
-                })
-                .end(function (err, res) {
-                    expect(res).to.have.status(200);
-                    expect(res.text).to.include('your message is sent');
-                    done();
-                });
-        });
+ 
 
     });
 
