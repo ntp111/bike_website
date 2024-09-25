@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:20
 
 # Set the working directory
 WORKDIR /usr/src/app
@@ -7,16 +7,8 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 
-RUN node -v
-RUN npm list sqlite3
-
-
-# Copy the rest of the app files
-COPY . .
-
-
-
-RUN npm rebuild sqlite3 --build-from-source
+# RUN node -v
+# RUN npm list sqlite3
 
 # Copy the source code
 COPY . .
