@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const sqlite3 = require('sqlite3').verbose();
+// const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const port = 3000;
 
@@ -24,21 +24,21 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
     res.render('login', { title: 'Login' });
 });
-app.post('/login', (req, res) => {
-    const { login_cd, password } = req.body;
-    const db = new sqlite3.Database('bike_shop.db');
+// // app.post('/login', (req, res) => {
+// //     const { login_cd, password } = req.body;
+// //     const db = new sqlite3.Database('bike_shop.db');
     
-    db.get('SELECT * FROM user WHERE login_cd = ? AND password = ?', [login_cd, password], (err, row) => {
-        if (err) {
-            res.status(500).send("Database query error");
-        } else if (row) {
-            res.redirect(`/?name=${encodeURIComponent(row.name)}`);
-        } else {
-            res.render('login', { title: 'Login', error:"Your login or password is wrong, please try again." });
-        }
-    });
-    db.close();
-});
+// //     db.get('SELECT * FROM user WHERE login_cd = ? AND password = ?', [login_cd, password], (err, row) => {
+// //         if (err) {
+// //             res.status(500).send("Database query error");
+// //         } else if (row) {
+// //             res.redirect(`/?name=${encodeURIComponent(row.name)}`);
+// //         } else {
+// //             res.render('login', { title: 'Login', error:"Your login or password is wrong, please try again." });
+// //         }
+// //     });
+// //     db.close();
+// // });
 
 
 app.get('/motorcycles', (req, res) => {
@@ -83,19 +83,19 @@ app.get('/insurance', (req, res) => {
 app.get('/service', (req, res) => {
     res.render('service', { title: 'Services' });
 });
-app.get('/news', (req, res) => {
+// app.get('/news', (req, res) => {
 
-    const db = new sqlite3.Database('bike_shop.db');
+//     const db = new sqlite3.Database('bike_shop.db');
 
-    db.all('SELECT * FROM news ', (err, rows) => {
-        if (err) {
-            return next(err);
-        }
-        res.render('news', { title: 'Search Results', news: rows });
-    });
+//     db.all('SELECT * FROM news ', (err, rows) => {
+//         if (err) {
+//             return next(err);
+//         }
+//         res.render('news', { title: 'Search Results', news: rows });
+//     });
 
-    db.close();
-});
+//     db.close();
+// });
 app.get('/dealers', (req, res) => {
     res.render('dealers', { title: 'Dealers' });
 });
@@ -103,39 +103,39 @@ app.get('/contact', (req, res) => {
     res.render('contact', { title: 'Contact Us' });
 
 });
-app.post('/contact', (req, res) => {
+// app.post('/contact', (req, res) => {
 
-    const { title, message, name, email, mobile  } = req.body;
-    const db = new sqlite3.Database('bike_shop.db');
+//     const { title, message, name, email, mobile  } = req.body;
+//     const db = new sqlite3.Database('bike_shop.db');
 
-    db.run('INSERT INTO contact (title, content, name, email, phone) VALUES (?, ?, ?, ?, ?)', [title, message, name, email, mobile], function(err) {
-        if (err) {
-            res.render('contact', { title: 'Contact Us', error:"error sending your message. please try again" });
-        } else {
-            res.render('contact', { title: 'Contact Us', success_msg:"your message is sent, we will get back to you as soon as possible." });
-        }
-    });
+//     db.run('INSERT INTO contact (title, content, name, email, phone) VALUES (?, ?, ?, ?, ?)', [title, message, name, email, mobile], function(err) {
+//         if (err) {
+//             res.render('contact', { title: 'Contact Us', error:"error sending your message. please try again" });
+//         } else {
+//             res.render('contact', { title: 'Contact Us', success_msg:"your message is sent, we will get back to you as soon as possible." });
+//         }
+//     });
 
-    db.close();
+//     db.close();
 
-});
-app.get('/registration', (req, res) => {
-    res.render('registration', { title: 'Registration' });
-});
-app.post('/registration', async (req, res) => {
-    const { login_cd, password, email, name, phone } = req.body;
-    const db = new sqlite3.Database('bike_shop.db');
+// });
+// app.get('/registration', (req, res) => {
+//     res.render('registration', { title: 'Registration' });
+// });
+// app.post('/registration', async (req, res) => {
+//     const { login_cd, password, email, name, phone } = req.body;
+//     const db = new sqlite3.Database('bike_shop.db');
 
-    db.run('INSERT INTO user (login_cd, password, email, name, phone) VALUES (?, ?, ?, ?, ?)', [login_cd, password, email, name, phone], function(err) {
-        if (err) {
-            res.render('error', { message: 'Error registering new member', error:{"status":500, "stack":null} });
-        } else {
-            res.render('home', { title: 'Home', name:name });
-        }
-    });
+//     db.run('INSERT INTO user (login_cd, password, email, name, phone) VALUES (?, ?, ?, ?, ?)', [login_cd, password, email, name, phone], function(err) {
+//         if (err) {
+//             res.render('error', { message: 'Error registering new member', error:{"status":500, "stack":null} });
+//         } else {
+//             res.render('home', { title: 'Home', name:name });
+//         }
+//     });
 
-    db.close();
-});
+//     db.close();
+// });
 
 
 

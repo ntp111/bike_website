@@ -11,11 +11,11 @@
   "author": "phong",
   "license": "ISC",
   "dependencies": {
+    "BikeWebsite": "file:",
     "body-parser": "^1.20.2",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
-    "nodemon": "^3.1.0",
-    "sqlite3": "^5.1.7"
+    "nodemon": "^3.1.0"
   },
   "devDependencies": {
     "chai": "^5.1.1",
