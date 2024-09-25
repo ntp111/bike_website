@@ -22,14 +22,26 @@ pipeline {
             steps {
                 echo 'Building the Docker image...'
                 bat 'docker build -t bike_website .'
+
+                echo 'Cleaning up old containers...'
+                bat 'docker stop bike_website_container || true'
+                bat 'docker rm bike_website_container || true'
+
+                echo 'Running the Docker container to verify...'
+                bat 'docker run -d --name bike_website_container bike_website'
+
+                echo 'Checking if the container is running...'
+                bat 'docker ps -a'
+                
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Running Mocha and Chai tests...'
-                                bat 'npm install'
-                bat 'npm test'
+                bat 'npm install'
+                // bat 'npm test'
+                bat 'docker exec -it bike_website_container npm test'
             }
         }
 
