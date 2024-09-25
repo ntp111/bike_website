@@ -35,20 +35,20 @@ pipeline {
             }
         }
 
-        // stage('Code Quality Analysis') {
-        //     steps {
-        //         echo 'Running SonarCloud analysis...'
-        //         script {
-        //             def scannerHome = tool 'SonarScanner' // Use 'SonarScanner'
+        stage('Code Quality Analysis') {
+            steps {
+                echo 'Running SonarCloud analysis...'
+                script {
+                    def scannerHome = tool 'SonarScanner' // Use 'SonarScanner'
 
-        //             withSonarQubeEnv('SonarCloud') {  // 'SonarCloud' is the name of your SonarQube installation in Jenkins
-        //                 bat "${scannerHome}/bin/sonar-scanner"
-        //             }
-        //         }
+                    withSonarQubeEnv('SonarCloud') {  // 'SonarCloud' is the name of your SonarQube installation in Jenkins
+                        bat "${scannerHome}/bin/sonar-scanner"
+                    }
+                }
         
 
-        //     }
-        // }
+            }
+        }
 
         stage('Deploy to Staging') {
             steps {
