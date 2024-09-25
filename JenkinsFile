@@ -87,7 +87,7 @@ pipeline {
                 echo 'Running Mocha and Chai tests...'
                 bat 'npm install'
                 // bat 'npm test'
-                bat 'docker exec -it bike_website_container npm test'
+                bat 'docker exec -it bike_website npm test'
             }
         }
 
