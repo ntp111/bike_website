@@ -24,11 +24,11 @@ pipeline {
                 bat 'docker build -t bike_website .'
 
                 echo 'Cleaning up old containers...'
-                bat 'docker stop bike_website_container || true'
-                bat 'docker rm bike_website_container || true'
+                bat 'docker stop bike_website || true'
+                bat 'docker rm bike_website || true'
 
                 echo 'Running the Docker container to verify...'
-                bat 'docker run -d --name bike_website_container bike_website'
+                bat 'docker run -d --name bike_website'
 
                 echo 'Checking if the container is running...'
                 bat 'docker ps -a'
