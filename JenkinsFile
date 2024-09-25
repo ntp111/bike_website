@@ -48,34 +48,34 @@ pipeline {
             steps {
                 echo 'Creating a temporary Docker container...'
                 
-                // Create a temporary container (for example, using the node image)
-                bat 'docker run -d --name temp_container node:14'
+                // // Create a temporary container (for example, using the node image)
+                // bat 'docker run -d --name temp_container node:14'
 
-                echo 'Building the Docker image...'
+                // echo 'Building the Docker image...'
                 
                 // Build the Docker image
                 bat 'docker build -t bike_website .'
 
-                echo 'Stopping and removing the temporary container...'
+                // echo 'Stopping and removing the temporary container...'
                 
-                // Stop and remove the temporary container (if it's still running)
-                script {
-                    def stopExitCode = bat(returnStatus: true, script: 'docker stop temp_container')
-                    if (stopExitCode == 0) {
-                        bat 'docker rm temp_container'
-                        echo 'Temporary container removed.'
-                    } else {
-                        echo 'Temporary container not found or already stopped.'
-                    }
-                }
+                // // Stop and remove the temporary container (if it's still running)
+                // script {
+                //     def stopExitCode = bat(returnStatus: true, script: 'docker stop temp_container')
+                //     if (stopExitCode == 0) {
+                //         bat 'docker rm temp_container'
+                //         echo 'Temporary container removed.'
+                //     } else {
+                //         echo 'Temporary container not found or already stopped.'
+                //     }
+                // }
 
-                echo 'Running the new Docker container from the built image...'
+                // echo 'Running the new Docker container from the built image...'
                 
-                // Run the container from the newly built image
-                bat 'docker run -d --name bike_website bike_website'
+                // // Run the container from the newly built image
+                // bat 'docker run -d --name bike_website bike_website'
 
-                echo 'Container is now running...'
-                bat 'docker ps -a'
+                // echo 'Container is now running...'
+                // bat 'docker ps -a'
             }
 
 
@@ -86,8 +86,8 @@ pipeline {
             steps {
                 echo 'Running Mocha and Chai tests...'
                 bat 'npm install'
-                // bat 'npm test'
-                bat 'docker exec -it bike_website npm test'
+                bat 'npm test'
+                // bat 'docker exec -it bike_website npm test'
             }
         }
 
