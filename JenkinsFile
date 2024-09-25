@@ -55,31 +55,31 @@ pipeline {
             }
         }
 
-        stage('Deploy to Production') {
-            steps {
-                script {
-                    // Step 1: Zip the application
-                    bat 'powershell Compress-Archive -Path .\\* -DestinationPath bike_website.zip'
+        // stage('Deploy to Production') {
+        //     steps {
+        //         script {
+        //             // Step 1: Zip the application
+        //             bat 'powershell Compress-Archive -Path .\\* -DestinationPath bike_website.zip'
 
-                    // Step 2: Upload the zip file to S3
-                    bat """
-                    aws configure set aws_access_key_id ${AWS_ACCESS_KEY}
-                    aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
-                    aws configure set region ${AWS_REGION}
-                    aws s3 cp bike_website.zip s3://${S3_BUCKET}/bike_website.zip
-                    """
+        //             // Step 2: Upload the zip file to S3
+        //             bat """
+        //             aws configure set aws_access_key_id ${AWS_ACCESS_KEY}
+        //             aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
+        //             aws configure set region ${AWS_REGION}
+        //             aws s3 cp bike_website.zip s3://${S3_BUCKET}/bike_website.zip
+        //             """
 
-                    // Step 3: Trigger deployment in CodeDeploy
-                    bat """
-                    aws deploy create-deployment \
-                    --application-name ${CODEDEPLOY_APP_NAME} \
-                    --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} \
-                    --s3-location bucket=${S3_BUCKET},key=bike_website.zip,bundleType=zip \
-                    --region ${AWS_REGION}
-                    """
-                }
-            }
-        }
+        //             // Step 3: Trigger deployment in CodeDeploy
+        //             bat """
+        //             aws deploy create-deployment \
+        //             --application-name ${CODEDEPLOY_APP_NAME} \
+        //             --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} \
+        //             --s3-location bucket=${S3_BUCKET},key=bike_website.zip,bundleType=zip \
+        //             --region ${AWS_REGION}
+        //             """
+        //         }
+        //     }
+        // }
     }
 
     post {
