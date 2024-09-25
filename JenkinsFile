@@ -6,7 +6,8 @@ pipeline {
         STAGING_ENV = 'staging' 
         PROD_ENV = 'production'
         EMAIL_RECIPIENT = 'ngtuanphong98@gmail.com'
-        SONAR_SCANNER_HOME = tool 'SonarScanner'
+        DOCKER_IMAGE = "BikeWebsite"
+        DOCKER_TAG = "1"
 
         AWS_REGION = 'ap-southeast-2'
         S3_BUCKET = 'bikewebsitebucket'
@@ -19,97 +20,53 @@ pipeline {
 
     stages {
         stage('Build') {
-            // steps{
-
-            //     // Check if the container exists and stop it
-            //     // script {
-            //     //     def containerName = bat(returnStdout: true, script: 'docker ps -a --format "{{.Names}}"').trim()
-
-            //     //     if (containerName) {
-            //     //         echo "Found container: ${containerName}"
-            //     //         bat "docker stop ${containerName}"
-            //     //         bat "docker rm ${containerName}"
-            //     //     } else {
-            //     //         echo "No containers found"
-            //     //     }
-            //     // }
-
-            //     // Build the Docker image
-            //     bat 'docker build -t bike_website .'
-
-            //     // // Run the Docker container to verify
-            //     // echo 'Running the Docker container...'
-            //     // bat 'docker run -d --name bike_website bike_website'
-
-            //     // echo 'Checking if the container is running...'
-            //     // bat 'docker ps -a'
-            // }
 
             steps {
                 echo 'Creating a temporary Docker container...'
-                
-                // // Create a temporary container (for example, using the node image)
-                // bat 'docker run -d --name temp_container node:14'
 
-                // echo 'Building the Docker image...'
-                
                 // Build the Docker image
-                bat 'docker build -t bike_website .'
+                bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
 
-                // echo 'Stopping and removing the temporary container...'
-                
-                // // Stop and remove the temporary container (if it's still running)
-                // script {
-                //     def stopExitCode = bat(returnStatus: true, script: 'docker stop temp_container')
-                //     if (stopExitCode == 0) {
-                //         bat 'docker rm temp_container'
-                //         echo 'Temporary container removed.'
-                //     } else {
-                //         echo 'Temporary container not found or already stopped.'
-                //     }
-                // }
+                echo 'Cleaning up unused Docker images...'
+                bat 'docker image prune -f'
 
-                // echo 'Running the new Docker container from the built image...'
-                
-                // // Run the container from the newly built image
-                // bat 'docker run -d --name bike_website bike_website'
-
-                // echo 'Container is now running...'
-                // bat 'docker ps -a'
             }
-
-
-            
         }
 
         stage('Test') {
             steps {
                 echo 'Running Mocha and Chai tests...'
                 bat 'npm install'
-                bat 'npm test'
+
+                bat "docker run --name test_container ${DOCKER_IMAGE}:${DOCKER_TAG} npm test"
+                bat "docker rm -f test_container"
+                // bat 'npm test'
                 // bat 'docker exec -it bike_website npm test'
             }
         }
 
-        stage('Code Quality Analysis') {
-            steps {
-                echo 'Running SonarCloud analysis...'
-                script {
-                    def scannerHome = tool 'SonarScanner' // Use 'SonarScanner'
+        // stage('Code Quality Analysis') {
+        //     steps {
+        //         echo 'Running SonarCloud analysis...'
+        //         script {
+        //             def scannerHome = tool 'SonarScanner' // Use 'SonarScanner'
 
-                    withSonarQubeEnv('SonarCloud') {  // 'SonarCloud' is the name of your SonarQube installation in Jenkins
-                        bat "${scannerHome}/bin/sonar-scanner"
-                    }
-                }
+        //             withSonarQubeEnv('SonarCloud') {  // 'SonarCloud' is the name of your SonarQube installation in Jenkins
+        //                 bat "${scannerHome}/bin/sonar-scanner"
+        //             }
+        //         }
         
 
-            }
-        }
+        //     }
+        // }
 
         stage('Deploy to Staging') {
             steps {
                 echo "Deploying application to ${env.STAGING_ENV} environment..."
-                bat 'docker-compose up -d'
+                echo 'Deploying using Docker Compose...'
+                bat 'docker-compose down'
+                bat 'docker-compose up -d'             
+                
             }
         }
 
