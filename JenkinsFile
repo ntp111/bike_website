@@ -38,12 +38,22 @@ pipeline {
         stage('Code Quality Analysis') {
             steps {
                 echo 'Running SonarCloud analysis...'
-                script {
-                    def scannerHome = tool 'SonarScanner' // Use 'SonarScanner'
+                // script {
+                //     def scannerHome = tool 'SonarScanner' // Use 'SonarScanner'
 
-                    withSonarQubeEnv('SonarCloud') {  // 'SonarCloud' is the name of your SonarQube installation in Jenkins
-                        bat "${scannerHome}/bin/sonar-scanner"
-                    }
+                //     withSonarQubeEnv('SonarCloud') {  // 'SonarCloud' is the name of your SonarQube installation in Jenkins
+                //         bat "${scannerHome}/bin/sonar-scanner"
+                //     }
+                // }
+                 script {
+                    bat """
+                        sonar-scanner.bat ^
+                        -Dsonar.organization=ntp111 ^
+                        -Dsonar.projectKey=ntp111_bike_website ^
+                        -Dsonar.sources=. ^
+                        -Dsonar.host.url=https://sonarcloud.io ^
+                        -Dsonar.login=${SONAR_TOKEN}
+                    """
                 }
             }
         }
