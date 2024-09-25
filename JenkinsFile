@@ -58,22 +58,22 @@ pipeline {
             }
         }
 
-        // stage('Deploy to Staging') {
-        //     steps {
-        //         echo "Deploying application to ${env.STAGING_ENV} environment..."
-        //         echo 'Deploying using Docker Compose...'
-        //         bat 'docker-compose down'
-        //         bat 'docker-compose up -d'             
+        stage('Deploy to Staging') {
+            steps {
+                echo "Deploying application to ${env.STAGING_ENV} environment..."
+                echo 'Deploying using Docker Compose...'
+                bat 'docker-compose down'
+                bat 'docker-compose up -d'             
                 
-        //     }
-        // }
+            }
+        }
 
-        // stage('Deploy to Production') {
-        //     steps {
-        //             echo "Deploying application to ${env.PROD_ENV} environment using AWS CodeDeploy..."
+        stage('Deploy to Production') {
+            steps {
+                    echo "Deploying application to ${env.PROD_ENV} environment using AWS CodeDeploy..."
 
-        //     }
-        // }
+            }
+        }
     }
 
     post {
