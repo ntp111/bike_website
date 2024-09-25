@@ -36,7 +36,6 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running Mocha and Chai tests...'
-                bat 'npm install'
 
                 bat "docker run --name test_container ${DOCKER_IMAGE}:${DOCKER_TAG} npm test"
                 bat "docker rm -f test_container"
