@@ -6,6 +6,7 @@ WORKDIR /usr/src/app
 # Install dependencies
 COPY package*.json ./
 RUN npm install
+RUN npm rebuild sqlite3 --build-from-source
 
 # Copy the source code
 COPY . .
