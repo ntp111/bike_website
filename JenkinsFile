@@ -22,17 +22,17 @@ pipeline {
             steps{
 
                 // Check if the container exists and stop it
-                script {
-                    def containerName = bat(returnStdout: true, script: 'docker ps -a --format "{{.Names}}"').trim()
+                // script {
+                //     def containerName = bat(returnStdout: true, script: 'docker ps -a --format "{{.Names}}"').trim()
 
-                    if (containerName) {
-                        echo "Found container: ${containerName}"
-                        bat "docker stop ${containerName}"
-                        bat "docker rm ${containerName}"
-                    } else {
-                        echo "No containers found"
-                    }
-                }
+                //     if (containerName) {
+                //         echo "Found container: ${containerName}"
+                //         bat "docker stop ${containerName}"
+                //         bat "docker rm ${containerName}"
+                //     } else {
+                //         echo "No containers found"
+                //     }
+                // }
 
                 // Build the Docker image
                 bat 'docker build -t bike_website .'
