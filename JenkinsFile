@@ -8,13 +8,6 @@ pipeline {
         EMAIL_RECIPIENT = 'ngtuanphong98@gmail.com'
         DOCKER_IMAGE = "bikewebsite"
         DOCKER_TAG = "1"
-
-        AWS_REGION = 'ap-southeast-2'
-        S3_BUCKET = 'bikewebsitebucket'
-        CODEDEPLOY_APP_NAME = 'MyBikeWebsite'
-        CODEDEPLOY_DEPLOYMENT_GROUP = 'bike_website'
-        AWS_ACCESS_KEY = credentials('aws_access_key')
-        AWS_SECRET_KEY = credentials('aws_secret_key')
         SONAR_TOKEN = credentials('sonar_token')
     }
 
@@ -49,6 +42,7 @@ pipeline {
                     def scannerHome = tool 'SonarScanner' // Use 'SonarScanner'
 
                     withSonarQubeEnv('SonarCloud') {  // 'SonarCloud' is the name of your SonarQube installation in Jenkins
+                        env.SONAR_SCANNER_OPTS = "-Xmx2048m"
                         bat "${scannerHome}/bin/sonar-scanner"
                     }
                 }
