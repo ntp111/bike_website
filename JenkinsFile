@@ -6,7 +6,7 @@ pipeline {
         STAGING_ENV = 'staging' 
         PROD_ENV = 'production'
         EMAIL_RECIPIENT = 'ngtuanphong98@gmail.com'
-        DOCKER_IMAGE = "BikeWebsite"
+        DOCKER_IMAGE = "bikewebsite"
         DOCKER_TAG = "1"
 
         AWS_REGION = 'ap-southeast-2'
